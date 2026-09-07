@@ -18,7 +18,10 @@ using color = vec3;
  */
 inline double linear_to_gamma(double linear_component)
 {
-    //TODO
+    if (linear_component > 0.0)
+        return std::sqrt(linear_component);
+    else
+        return 0.0;
 }
 
 void write_color(std::ostream& out, const color& pixel)

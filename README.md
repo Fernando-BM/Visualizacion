@@ -1,3 +1,5 @@
+## Fernando Bernal Martinez
+# 313352304
 # Visualizacion
 Repositorio con los contenidos vistos a lo largo del curso
 
