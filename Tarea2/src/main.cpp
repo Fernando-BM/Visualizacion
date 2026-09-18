@@ -128,9 +128,19 @@ std::vector<float> getSierpinskiLevel(int n) {
 
 int main()
 {
+    
+    /*
+    // con entrada estandar
     std::cout << "Seleccione el número del nivel del fractal: \n";
     int selection;
-    std::cin >> selection;
+    std::cin >> selection;*/
+
+
+
+    // con teclas 0-9
+    int currentLevel = 1;
+    float choose = 1.0f; // Nivel inicial
+    
     // Initialize GLFW
     if (!glfwInit())
     {
@@ -207,8 +217,14 @@ int main()
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    //Vértices a usar
+    /*
+    // Vertices a usar con entrada estandar
     std::vector<float> vertices = getSierpinskiLevel(selection);
+
+    */
+
+    //Vértices a usar con teclas 0-9
+    std::vector<float> vertices = getSierpinskiLevel(currentLevel);
 
     GLuint VBO, VAO;
     
@@ -232,7 +248,67 @@ int main()
     glBindVertexArray(0);
 
 
-    // Render loop
+    // Render loop con teclas del 1-9
+    while (!glfwWindowShouldClose(window))
+    {
+        // Procesar entrada
+        if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
+            choose = 1.0f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
+            choose = 2.0f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) {
+            choose = 3.0f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS) {
+            choose = 4.0f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS) {
+            choose = 5.0f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS) {
+            choose = 6.0f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS) {
+            choose = 7.0f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS) {
+            choose = 8.0f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS) {
+            choose = 9.0f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) {
+            choose = 0.0f;
+        }
+
+        // Actualizar el nivel si cambia
+        if (static_cast<int>(choose) != currentLevel) {
+            currentLevel = static_cast<int>(choose);
+
+            // Regenerar los vértices para el nuevo nivel
+            vertices = getSierpinskiLevel(currentLevel);
+
+            // Actualizar el contenido del VBO
+            glBindBuffer(GL_ARRAY_BUFFER, VBO);
+            glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_DYNAMIC_DRAW);
+        }
+
+        // Renderizar
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
+
+        // Intercambiar buffers
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    /*
+    // Render loop (con entrada estandar)
     while (!glfwWindowShouldClose(window))
     {
         // Input
@@ -253,6 +329,8 @@ int main()
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+ 
+    */
 
     // Deallocate resources
     glDeleteVertexArrays(1, &VAO);
