@@ -46,8 +46,8 @@ class OrbitCamera
         {
             m_radius = glm::distance(m_pos,m_coi);
             glm::vec3 direction = m_pos - m_coi;
-            m_theta = std::atan2(direction.z,direction.x);
-            m_phi = std::atan2(direction.y,direction.z);
+            m_theta = std::atan2(direction.z, direction.x);
+            m_phi = std::asin(direction.y / m_radius);
         }
 
         /**
