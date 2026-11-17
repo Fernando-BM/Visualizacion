@@ -133,12 +133,26 @@ void Scene::render()  {
         glm::mat4 mirrorView = glm::lookAt(refPos, refTarget, refUp);
 
         glFrontFace(GL_CCW);
-        //TODO -> El renderizado de los modelos a la textura
+        // ---- PASO 1: renderizar la escena reflejada a la textura ----
+        glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer);
+        // El viewport debe coincidir con el tamaño de la textura (1280x720)
+        glViewport(0, 0, 1280, 720);
+        glEnable(GL_DEPTH_TEST);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // Se usa la vista de la cámara reflejada. No se dibuja el plano (el espejo)
+        // ni el marco, para que no tapen la escena vista desde detrás del espejo.
+        ball->renderModel(mirrorView, m_projection, true);
+        chair->renderModel(mirrorView, m_projection, true);
+        mesa->renderModel(mirrorView, m_projection, true);
 
-        //TODO -> Definir el buffer por defecto, es decir la ventana
-        // Cuidado con el tamaño que se define en el buffer
-
+        // ---- PASO 2: volver al framebuffer por defecto (la ventana) ----
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        // Se usa el tamaño real del framebuffer (en pantallas retina difiere del tamaño de ventana)
+        int fbWidth, fbHeight;
+        glfwGetFramebufferSize(m_window->getWindow(), &fbWidth, &fbHeight);
+        glViewport(0, 0, fbWidth, fbHeight);
 
         glFrontFace(GL_CCW);
 
@@ -151,8 +165,10 @@ void Scene::render()  {
         mesa->renderModel(m_view, m_projection,true);
         mirror->renderModel(m_view, m_projection,true);
 
-        //TODO DEFINIR LA TEXTURA A USAR
-
+        // La textura del plano es la imagen renderizada desde la cámara reflejada
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+        // "samp" vale 0 por defecto (unidad GL_TEXTURE0), que es la que acabamos de usar
         plane->renderModel(m_view, m_projection,false);
 
 
